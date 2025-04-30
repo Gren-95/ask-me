@@ -10,7 +10,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     console.error('Error opening database:', err);
   } else {
     console.log('Connected to SQLite database');
-    
+
     // Create tables
     db.run(`
       CREATE TABLE IF NOT EXISTS forms (
@@ -26,7 +26,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.log('Forms table created');
       }
     });
-    
+
     db.run(`
       CREATE TABLE IF NOT EXISTS questions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,6 +41,23 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.error('Error creating questions table:', err);
       } else {
         console.log('Questions table created');
+      }
+    });
+
+    // Create users table for authentication
+    db.run(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        name TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `, (err) => {
+      if (err) {
+        console.error('Error creating users table:', err);
+      } else {
+        console.log('Users table created');
       }
     });
   }
@@ -90,4 +107,4 @@ export const all = (sql: string, params: any[] = []) => {
       }
     });
   });
-}; 
+};
