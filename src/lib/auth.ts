@@ -72,13 +72,13 @@ export async function loginUser(data: LoginData): Promise<{ user: User; token: s
   // Find the user
   const user = await get('SELECT * FROM users WHERE email = ?', [data.email]);
   if (!user) {
-    throw new Error('Invalid email or password');
+    throw new Error('Invalid username or password');
   }
 
   // Verify password
   const isPasswordValid = await verifyPassword(data.password, user.password);
   if (!isPasswordValid) {
-    throw new Error('Invalid email or password');
+    throw new Error('Invalid username or password');
   }
 
   // Create JWT token

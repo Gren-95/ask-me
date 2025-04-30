@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -15,6 +15,14 @@ export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/forms"
+  const errorParam = searchParams.get("error")
+
+  // Set error from URL parameter if present
+  useEffect(() => {
+    if (errorParam) {
+      setError(errorParam === "CredentialsSignin" ? "Invalid username or password" : errorParam)
+    }
+  }, [errorParam])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,7 +34,8 @@ export default function LoginPage() {
       router.push(callbackUrl)
     } catch (err) {
       console.error("Login error:", err)
-      setError(err instanceof Error ? err.message : "Login failed")
+      // Display the specific error message from NextAuth
+      setError(err instanceof Error ? err.message : "Invalid username or password")
     } finally {
       setIsLoading(false)
     }

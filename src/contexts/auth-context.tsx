@@ -38,11 +38,14 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (result?.error) {
+        // Throw the specific error message from NextAuth
         throw new Error(result.error);
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError(err instanceof Error ? err.message : "Login failed");
+      // Set the error in the context
+      setError(err instanceof Error ? err.message : "Invalid username or password");
+      // Re-throw the error so it can be caught by the login page
       throw err;
     }
   };

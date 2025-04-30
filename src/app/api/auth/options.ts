@@ -28,7 +28,8 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error("Authentication error:", error);
-          return null;
+          // Instead of returning null, throw an error with the message
+          throw new Error("Invalid username or password");
         }
       },
     }),
