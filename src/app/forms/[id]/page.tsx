@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import { use } from "react"
 
 interface Question {
   id: string
@@ -19,16 +20,17 @@ interface Form {
   questions: Question[]
 }
 
-export default function FormPage({ params }: { params: { id: string } }) {
+export default function FormPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [form, setForm] = useState<Form | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { id } = use(params)
 
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const response = await fetch(`/api/forms/${params.id}`)
+        const response = await fetch(`/api/forms/${id}`)
         if (!response.ok) {
           throw new Error("Failed to fetch form")
         }
@@ -43,7 +45,7 @@ export default function FormPage({ params }: { params: { id: string } }) {
     }
 
     fetchForm()
-  }, [params.id])
+  }, [id])
 
   if (loading) {
     return <div className="container mx-auto py-8">Loading...</div>
@@ -102,13 +104,32 @@ export default function FormPage({ params }: { params: { id: string } }) {
               />
             )}
 
-            {question.type === "multiple-choice" && (
+            {question.type === "single-choice" && (
               <div className="space-y-2">
                 {JSON.parse(question.options || "[]").map(
                   (option: string, index: number) => (
                     <div key={index} className="flex items-center gap-2">
                       <input
                         type="radio"
+                        name={`question-${question.id}`}
+                        id={`option-${question.id}-${index}`}
+                      />
+                      <label htmlFor={`option-${question.id}-${index}`}>
+                        {option}
+                      </label>
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+
+            {question.type === "multiple-choice" && (
+              <div className="space-y-2">
+                {JSON.parse(question.options || "[]").map(
+                  (option: string, index: number) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
                         name={`question-${question.id}`}
                         id={`option-${question.id}-${index}`}
                       />

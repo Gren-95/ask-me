@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-type QuestionType = "text" | "multiple-choice" | "checkbox"
+type QuestionType = "text" | "multiple-choice" | "single-choice"
 
 interface Question {
   id: string
@@ -195,6 +195,32 @@ export default function NewFormPage() {
                 </div>
               )}
 
+              {question.type === "single-choice" && (
+                <div className="space-y-2">
+                  {question.options?.map((option, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={option}
+                        onChange={(e) =>
+                          updateOption(question.id, index, e.target.value)
+                        }
+                        className="flex-1 p-2 border rounded-md"
+                        placeholder={`Option ${index + 1}`}
+                      />
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addOption(question.id)}
+                  >
+                    Add Option
+                  </Button>
+                </div>
+              )}
+
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -218,6 +244,14 @@ export default function NewFormPage() {
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Text Question
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => addQuestion("single-choice")}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Single Choice
           </Button>
           <Button
             type="button"

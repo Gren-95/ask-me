@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     const result = { ...form, questions: formQuestions };
     console.log('Created form with questions:', result);
     
-    return NextResponse.json(result);
+    return NextResponse.json(result, { status: 201 });
   } catch (error) {
     console.error('Error creating form:', error)
     return NextResponse.json({ 
